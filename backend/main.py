@@ -2,6 +2,7 @@
 Minimal FastAPI backend for SyftUI Example with SyftBox integration
 """
 
+import os
 from datetime import datetime
 from typing import Dict, Any
 
@@ -106,12 +107,23 @@ async def get_status() -> Dict[str, Any]:
     }
 
 
-# Serve static files (for production)
-try:
-    app.mount("/", StaticFiles(directory="frontend/out", html=True, check_dir=False))
-except RuntimeError:
-    # Frontend not built yet, skip static files
-    logger.warning("Frontend not built - static files not available")
+# Serve static files (for production) - only if frontend/out exists
+frontend_dir = "frontend/out"
+if os.path.exists(frontend_dir) and os.path.isdir(frontend_dir):
+    app.mount("/", StaticFiles(directory=frontend_dir, html=True))
+    logger.info("✅ Serving static files from frontend/out")
+else:
+    logger.warning("⚠️  Frontend not built - static files not available")
+    
+    # Add a simple root endpoint for when frontend isn't available
+    @app.get("/")
+    async def root():
+        return {
+            "message": "SyftUI Example Backend is running!",
+            "frontend_status": "not_built",
+            "api_docs": "/docs",
+            "health": "/health"
+        }
 
 
 if __name__ == "__main__":
