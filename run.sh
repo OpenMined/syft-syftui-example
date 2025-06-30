@@ -40,7 +40,7 @@ if ! command -v bun &> /dev/null; then
     export PATH="$HOME/.bun/bin:$PATH"
 fi
 
-# Build frontend
+# Build frontend using bun's runtime
 echo "INFO	[syftbox] Building frontend..."
 cd frontend
 "$HOME/.bun/bin/bun" install
