@@ -6,12 +6,17 @@ interface HelloResponse {
   message: string
   timestamp: string
   status: string
+  user_email: string
 }
 
 interface StatusResponse {
   app: string
   version: string
   timestamp: string
+  syftbox: {
+    status: string
+    user_email: string
+  }
   components: {
     backend: string
     frontend: string
@@ -57,7 +62,7 @@ export default function Home() {
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '2rem' }}>
-        <h1>SyftUI Example</h1>
+        <h1>🚀 SyftUI Example</h1>
         <p>Loading...</p>
       </div>
     )
@@ -66,7 +71,7 @@ export default function Home() {
   if (error) {
     return (
       <div style={{ textAlign: 'center', padding: '2rem' }}>
-        <h1>SyftUI Example</h1>
+        <h1>🚀 SyftUI Example</h1>
         <p style={{ color: 'red' }}>Error: {error}</p>
         <p>Make sure the backend is running on {apiUrl}</p>
       </div>
@@ -102,6 +107,9 @@ export default function Home() {
             {hello.message}
           </h2>
           <p style={{ color: '#666', fontSize: '0.9rem' }}>
+            User: {hello.user_email}
+          </p>
+          <p style={{ color: '#666', fontSize: '0.9rem' }}>
             Received at: {new Date(hello.timestamp).toLocaleString()}
           </p>
         </div>
@@ -116,6 +124,28 @@ export default function Home() {
         }}>
           <h3 style={{ color: '#1e3a8a' }}>Application Status</h3>
           <p><strong>App:</strong> {status.app} v{status.version}</p>
+          
+          {/* SyftBox Status */}
+          <div style={{
+            margin: '1rem 0',
+            padding: '0.75rem',
+            backgroundColor: status.syftbox.status === 'connected' ? '#dcfce7' : '#fef3c7',
+            borderRadius: '4px'
+          }}>
+            <strong>SyftBox:</strong> 
+            <span style={{ 
+              color: status.syftbox.status === 'connected' ? 'green' : 'orange',
+              marginLeft: '0.5rem'
+            }}>
+              {status.syftbox.status}
+            </span>
+            {status.syftbox.status === 'connected' && (
+              <div style={{ fontSize: '0.9rem', marginTop: '0.25rem' }}>
+                Logged in as: {status.syftbox.user_email}
+              </div>
+            )}
+          </div>
+
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
@@ -170,6 +200,7 @@ export default function Home() {
         }}>
           <li>✅ Next.js Frontend</li>
           <li>✅ FastAPI Backend</li>
+          <li>✅ SyftBox Integration</li>
           <li>✅ Cron Job Component</li>
         </ul>
       </div>
